@@ -9,8 +9,15 @@ import '/node_modules/@ungap/custom-elements/min.js';
 export class VlMapLayerTileWms extends vlElement(HTMLElement) {
   constructor() {
     super();
-    this._source = this.__createSource();
-    this._layer = this._createLayer();
+    // this._source = this.__createSource();
+    // this._layer = this._createLayer();
+  }
+
+  updated(_changedProperties) {
+    if(_changedProperties.has('url') && _changedProperties.has('title') && _changedProperties.has('layers')) {
+      this._source = this.__createSource();
+      this._layer = this._createLayer();
+    }
   }
 
   __createSource() {
@@ -32,10 +39,10 @@ export class VlMapLayerTileWms extends vlElement(HTMLElement) {
 
   _createLayer() {
     const layer = new TileLayer({
-      title: this._name,
+      title: this._title,
       source: this._source,
       opacity: this._opacity,
-      visible: true,
+      visible: this.hasAttribute('visible') ? this.getAttribute('visible') : true,
     });
     layer.on('change:visible', () => this.rerender());
     return layer;
